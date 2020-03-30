@@ -12,7 +12,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...          
-      - docker build -t test .
+      - docker build -t docker-whale .
       - docker tag test:latest $REPOSITORY_URI      
   post_build:
     commands:

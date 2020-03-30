@@ -1,6 +1,7 @@
 FROM busybox
 
-LABEL maintainer="christoph@wempe.net"
+#LABEL maintainer="christoph@wempe.net"
 
 # sleep forever
-CMD tail -f /dev/null
+#CMD tail -f /dev/null
+CMD [ "ps", "faux" ]
