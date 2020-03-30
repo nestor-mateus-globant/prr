@@ -13,9 +13,10 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...          
       - docker build -t docker-whale .
-      - docker tag test:latest $REPOSITORY_URI      
+      - docker tag docker-whale:latest $REPOSITORY_URI      
   post_build:
     commands:
+      - docker images
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $REPOSITORY_URI   
