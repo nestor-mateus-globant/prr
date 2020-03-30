@@ -11,8 +11,7 @@ env:
 phases:
   install:
     runtime-versions:
-      docker: 18
-      java: openjdk8
+      docker: 18      
   pre_build:
     commands:
       #- AWS_DEFAULT_REGION=us-east-1
