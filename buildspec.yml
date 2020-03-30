@@ -8,6 +8,7 @@ phases:
     commands:
       #- AWS_DEFAULT_REGION=us-east-1
       - docker --version
+      - service docker status
       - echo Logging in to Amazon ECR...
       - aws --version
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
