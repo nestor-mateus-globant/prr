@@ -30,7 +30,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - sonar-scanner -X -Dsonar.projectKey=nestor-mateus-globant_prr -Dsonar.organization=nestor-mateus-globant -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=d744806ee927b93aff64c63cf5d7df7e8e31258c          
+      - sonar-scanner -X -Dsonar.projectKey=nestor-mateus-globant_prr -Dsonar.organization=nestor-mateus-globant -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=d744806ee927b93aff64c63cf5d7df7e8e31258c -Dsonar.exclusions=**\sonar-scanner-3.3.0.1492-linux\**          
       #- docker build -t docker-whale .
       #- docker tag docker-whale:latest $REPOSITORY_URI      
   post_build:
