@@ -17,8 +17,8 @@ phases:
       #- AWS_DEFAULT_REGION=us-east-1
       - docker --version
       #- service docker status
-      - apt-get update
-      - apt-get install -y jq      
+      #- apt-get update
+      #- apt-get install -y jq      
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.3.0.1492-linux.zip
       - unzip sonar-scanner-cli-3.3.0.1492-linux.zip
       - export PATH=$PATH:./sonar-scanner-3.3.0.1492-linux/bin/
