@@ -1,14 +1,28 @@
 version: 0.2
 
+
+
+env:
+  parameter-store:
+    SONARQUBE_TOKEN: "d744806ee927b93aff64c63cf5d7df7e8e31258c"
+    SONARQUBE_ENDPOINT: "nestor-mateus-globant_prr"
+
+
 phases:
   install:
     runtime-versions:
       docker: 18
+      java: openjdk8
   pre_build:
     commands:
       #- AWS_DEFAULT_REGION=us-east-1
       - docker --version
       #- service docker status
+      - apt-get update
+      - apt-get install -y jq      
+      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.3.0.1492-linux.zip
+      - unzip sonar-scanner-cli-3.3.0.1492-linux.zip
+      - export PATH=$PATH:./sonar-scanner-3.3.0.1492-linux/bin/
       - echo Logging in to Amazon ECR...
       - aws --version
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
@@ -16,7 +30,8 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Building the Docker image...          
+      - echo Building the Docker image...
+      - sonar-scanner          
       #- docker build -t docker-whale .
       #- docker tag docker-whale:latest $REPOSITORY_URI      
   post_build:
