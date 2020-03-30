@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: PowerBi API - TicSocial
+Parameters:
+  EnvName:
+    Description: Names of objects to create
+    Type: String
+    Default: ticsocial
+
+#Los servicios a manejar
+
+Resources: 
+  LambdaIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+
+  PwbiLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: lambda_function.lambda_handler
+      FunctionName: pwbi-lambda2
+      Runtime: python3.7
+      Code:
+        S3Bucket: testing-negmapro
+        S3Key: lambda.zip
+      Role: !GetAtt LambdaIamRole.Arn 
+
+  PwbiRestApiCreate:
+    Type: AWS::ApiGateway::RestApi
+    Properties:        
+      Description: pwbi call methods
+      Name: pwbi-api
+      EndpointConfiguration:
+         Types:
+          - REGIONAL
+
+  PwbiApiPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt PwbiLambdaFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PwbiRestApiCreate}/*/POST/
+    #DependsOn: PwbiLambdaFunction
+    
+  PwbiApiRecourse:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref PwbiRestApiCreate
+      ParentId: !GetAtt PwbiRestApiCreate.RootResourceId
+      PathPart: 'lambda'
+    #DependsOn: PwbiRestApiCreate
+    
+  PwbiApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      RestApiId: !Ref PwbiRestApiCreate
+      ResourceId: !Ref PwbiApiRecourse
+      HttpMethod: POST
+      RequestParameters:        
+        method.request.querystring.type: true
+        #method.request.querystring.apiToken: true
+      Integration:
+        Type: AWS
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST # this for the interaction between API Gateway and Lambda and MUST be POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PwbiLambdaFunction.Arn}/invocations
+        RequestTemplates:
+          application/json: "{\"type\" : \"$input.params('type')\",\"body\" : $input.json('$')}"
+        IntegrationResponses:
+        - StatusCode: 200 
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+          ResponseTemplates:
+            application/json: ''                 
+      MethodResponses: 
+      - StatusCode: 200 
+        ResponseModels: 
+          application/json: 'Empty' 
+        ResponseParameters: 
+          method.response.header.Access-Control-Allow-Headers: false 
+          method.response.header.Access-Control-Allow-Methods: false 
+          method.response.header.Access-Control-Allow-Origin: false
+      #DependsOn:
+        #- PwbiRestApiCreate
+        #- PwbiLambdaFunction
+        #- PwbiApiRecourse
+    
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: PwbiApiMethod
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref PwbiRestApiCreate
+      #StageName: !Ref ApiGatewayStage
+
+  ApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref ApiGatewayDeployment
+      Description: Lambda API Stage production
+      RestApiId: !Ref PwbiRestApiCreate
+      StageName: 'production'
+
+  ApiGatewayIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: ''
+            Effect: 'Allow'
+            Principal:
+              Service:
+                - 'apigateway.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'lambda:*'
+                Resource: !GetAtt PwbiLambdaFunction.Arn
+
+
+
