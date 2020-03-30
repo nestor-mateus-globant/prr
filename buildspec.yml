@@ -6,7 +6,7 @@ phases:
       - AWS_DEFAULT_REGION=us-east-1
       - echo Logging in to Amazon ECR...
       - aws --version
-      - $(aws ecr get-login-password --region $AWS_DEFAULT_REGION)
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION)
       - REPOSITORY_URI=663668850653.dkr.ecr.us-east-1.amazonaws.com/sdc-airflow:latest
   build:
     commands:
