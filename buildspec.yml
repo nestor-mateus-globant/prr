@@ -8,7 +8,7 @@ phases:
     commands:
       #- AWS_DEFAULT_REGION=us-east-1
       - docker --version
-      - service docker status
+      #- service docker status
       - echo Logging in to Amazon ECR...
       - aws --version
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
@@ -17,14 +17,15 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...          
-      - docker build -t docker-whale .
-      - docker tag docker-whale:latest $REPOSITORY_URI      
+      #- docker build -t docker-whale .
+      #- docker tag docker-whale:latest $REPOSITORY_URI      
   post_build:
     commands:
-      - docker images
+      #- docker images
       - echo Build completed on `date`
       - echo Pushing the Docker image...
-      - docker push $REPOSITORY_URI   
-
+      #- docker push $REPOSITORY_URI   
+      - chmod 777 test.sh
+      - sh test.sh
 
 
