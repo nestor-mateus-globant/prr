@@ -3,7 +3,7 @@ version: 0.2
 
 
 env:
-  parameter-store:
+  variables:
     SONARQUBE_TOKEN: "d744806ee927b93aff64c63cf5d7df7e8e31258c"
     SONARQUBE_ENDPOINT: "nestor-mateus-globant_prr"
 
