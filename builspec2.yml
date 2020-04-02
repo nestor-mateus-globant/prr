@@ -25,7 +25,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - REPOSITORY_URI=663668850653.dkr.ecr.us-east-1.amazonaws.com/sdc-airflow:latest
+      #- REPOSITORY_URI=663668850653.dkr.ecr.us-east-1.amazonaws.com/sdc-airflow:latest
   build:
     commands:
       - echo Build started on `date`
