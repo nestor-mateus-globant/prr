@@ -23,9 +23,9 @@ phases:
       - unzip sonar-scanner-cli-3.3.0.1492-linux.zip
       - export PATH=$PATH:./sonar-scanner-3.3.0.1492-linux/bin/
       - echo Logging in to Amazon ECR...
-      - aws --version
-      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - REPOSITORY_URI=663668850653.dkr.ecr.us-east-1.amazonaws.com/sdc-airflow:latest
+      #- aws --version
+      #- $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      #- REPOSITORY_URI=663668850653.dkr.ecr.us-east-1.amazonaws.com/sdc-airflow:latest
   build:
     commands:
       - echo Build started on `date`
