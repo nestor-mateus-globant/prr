@@ -71,9 +71,9 @@ RUN set -ex \
     && apt-get autoremove -yqq --purge \
     && apt-get clean
 
-COPY sdc_etl_libs/sdc_etl_libs-0.0.67-py3-none-any.whl /sdc_etl_libs-0.0.67-py3-none-any.whl
+#COPY sdc_etl_libs/sdc_etl_libs-0.0.67-py3-none-any.whl /sdc_etl_libs-0.0.67-py3-none-any.whl
 
-RUN pip install sdc_etl_libs-0.0.67-py3-none-any.whl
+#RUN pip install sdc_etl_libs-0.0.67-py3-none-any.whl
 
 RUN rm -rf \
         /var/lib/apt/lists/* \
