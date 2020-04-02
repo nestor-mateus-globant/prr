@@ -13,7 +13,7 @@ stop:
 deploy-ecs:
 	ecs-cli compose --file docker-compose-CeleryExecutor.yml service up --cluster airflow
 start_local:
-	docker-compose -f docker-compose-LocalExecutor.yml up -d
+	docker-compose -f docker-compose-LocalExecutor.yml up
 stop_local:
 	docker-compose -f docker-compose-LocalExecutor.yml down
 start_local_celery:
