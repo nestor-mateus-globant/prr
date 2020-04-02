@@ -38,7 +38,8 @@ phases:
       #- docker images
       - echo Build completed on `date`
       - echo Pushing the Docker image...
-      #- docker push $REPOSITORY_URI   
+      #- docker push $REPOSITORY_URI
+      - chmod 666 /var/run/docker.sock   
       - chmod 777 test.sh
       - sh test.sh
 
