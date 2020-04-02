@@ -28,6 +28,7 @@ phases:
       #- REPOSITORY_URI=663668850653.dkr.ecr.us-east-1.amazonaws.com/sdc-airflow:latest
   build:
     commands:
+      - docker info
       - echo Build started on `date`
       - echo Building the Docker image...
       #- sonar-scanner -X -Dsonar.projectKey=nestor-mateus-globant_prr -Dsonar.organization=nestor-mateus-globant -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=d744806ee927b93aff64c63cf5d7df7e8e31258c -Dsonar.exclusions=**\sonar-scanner-3.3.0.1492-linux\**          
