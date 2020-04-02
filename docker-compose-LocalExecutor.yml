@@ -8,7 +8,7 @@ services:
             #- POSTGRES_DB=airflow
 
     webserver:
-        image: 663668850653.dkr.ecr.us-east-1.amazonaws.com/sdc-airflow #511674593789.dkr.ecr.us-east-2.amazonaws.com/data-engineering
+        image: puckel/docker-airflow  #511674593789.dkr.ecr.us-east-2.amazonaws.com/data-engineering
         restart: always
         #depends_on:
             #- postgres

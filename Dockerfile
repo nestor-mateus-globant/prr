@@ -1,22 +1,22 @@
-# VERSION 1.10.2
+# VERSION 1.10.9
 # AUTHOR: Matthieu "Puckel_" Roisil
 # DESCRIPTION: Basic Airflow container
 # BUILD: docker build --rm -t puckel/docker-airflow .
 # SOURCE: https://github.com/puckel/docker-airflow
 
-FROM python:3.6-slim
+FROM python:3.7-slim-buster
 LABEL maintainer="Puckel_"
 
-# Never prompts the user for choices on installation/configuration of packages
+# Never prompt the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Airflow
-ARG AIRFLOW_VERSION=1.10.2
-ARG AIRFLOW_HOME=/usr/local/airflow
+ARG AIRFLOW_VERSION=1.10.9
+ARG AIRFLOW_USER_HOME=/usr/local/airflow
 ARG AIRFLOW_DEPS=""
 ARG PYTHON_DEPS=""
-ENV AIRFLOW_GPL_UNIDECODE yes
+ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
 
 # Define en_US.
 ENV LANGUAGE en_US.UTF-8
@@ -25,7 +25,8 @@ ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
 ENV LC_MESSAGES en_US.UTF-8
 
-COPY requirements.txt /requirements.txt
+# Disable noisy "Handling signal" log messages:
+# ENV GUNICORN_CMD_ARGS --log-level WARNING
 
 RUN set -ex \
     && buildDeps=' \
@@ -48,34 +49,23 @@ RUN set -ex \
         curl \
         rsync \
         netcat \
-        gcc \
-        gnupg \
-        unixodbc unixodbc-dev \
         locales \
-        libpq-dev \
-        odbc-postgresql \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
-    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
+    && useradd -ms /bin/bash -d ${AIRFLOW_USER_HOME} airflow \
     && pip install -U pip setuptools wheel \
-    && pip install pytz psycopg2-binary\
+    && pip install pytz \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
-    && pip install awscli --upgrade \
-    && pip install apache-airflow[crypto,celery,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
-    && pip install -r /requirements.txt \
+    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
+    && pip install 'redis==3.2' \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get autoremove -yqq --purge \
-    && apt-get clean
-
-#COPY sdc_etl_libs/sdc_etl_libs-0.0.67-py3-none-any.whl /sdc_etl_libs-0.0.67-py3-none-any.whl
-
-#RUN pip install sdc_etl_libs-0.0.67-py3-none-any.whl
-
-RUN rm -rf \
+    && apt-get clean \
+    && rm -rf \
         /var/lib/apt/lists/* \
         /tmp/* \
         /var/tmp/* \
@@ -83,19 +73,14 @@ RUN rm -rf \
         /usr/share/doc \
         /usr/share/doc-base
 
-COPY scripts/entrypoint.sh /entrypoint.sh
-COPY config/airflow/airflow_local.cfg ${AIRFLOW_HOME}/airflow.cfg
-#COPY dags /usr/local/airflow/dags
+COPY script/entrypoint.sh /entrypoint.sh
+COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
-RUN chmod 777 /usr/local/lib/python3.6/site-packages/*
-
-RUN chown -R airflow: ${AIRFLOW_HOME}
-RUN chown -R airflow: /usr/local/lib/python3.6/site-packages
-#RUN chown -R airflow: /usr/local/airflow/dags
+RUN chown -R airflow: ${AIRFLOW_USER_HOME}
 
 EXPOSE 8080 5555 8793
 
 USER airflow
-WORKDIR ${AIRFLOW_HOME}
+WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["webserver"] # set default arg for entrypoint
+CMD ["webserver"]
