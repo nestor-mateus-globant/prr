@@ -1,12 +1,6 @@
 version: '2.1'
 services:
-    #postgres:
-        #image: postgres:9.6
-        #environment:
-            #- POSTGRES_USER=airflow
-            #- POSTGRES_PASSWORD=airflow
-            #- POSTGRES_DB=airflow
-
+ 
     webserver:
         image: 663668850653.dkr.ecr.us-east-1.amazonaws.com/sdc-airflow  #511674593789.dkr.ecr.us-east-2.amazonaws.com/data-engineering
         restart: always
