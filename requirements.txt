@@ -5,7 +5,7 @@ docker-pycreds==0.4.0
 dockerpty==0.4.1
 docopt==0.6.2
 docutils==0.15.2
-Flask==0.12.4
+Flask==1.0
 Flask-Admin==1.5.2
 Flask-Cache==0.13.1
 Flask-Login==0.4.1
