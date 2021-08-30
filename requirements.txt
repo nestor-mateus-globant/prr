@@ -1,2 +1,2 @@
-apache-airflow==1.10.2
+apache-airflow==2.1.2
 SQLAlchemy==1.2.19
